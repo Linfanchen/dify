@@ -15,7 +15,12 @@ from dify_app import DifyApp
 
 logger = logging.getLogger(__name__)
 
-
+"""
+Redis 封装
+    根据环境变量自动创建单机 / Sentinel / Cluster 任一模式的 Redis 连接，
+    并以线程安全的延迟初始化包装器 RedisClientWrapper 暴露给全应用，
+    同时提供 @redis_fallback 装饰器让业务代码在 Redis 不可用时优雅降级。
+"""
 class RedisClientWrapper:
     """
     A wrapper class for the Redis client that addresses the issue where the global
@@ -67,6 +72,7 @@ def init_app(app: DifyApp):
     else:
         clientside_cache_config = None
 
+    # 读取 19 个环境变量
     redis_params: dict[str, Any] = {
         "username": dify_config.REDIS_USERNAME,
         "password": dify_config.REDIS_PASSWORD or None,  # Temporary fix for empty password
@@ -125,6 +131,8 @@ def init_app(app: DifyApp):
 
 def redis_fallback(default_return: Any = None):
     """
+    捕获 RedisError，记录 warning 日志，返回 default_return，避免业务因 Redis 抖动而崩溃。
+
     decorator to handle Redis operation exceptions and return a default value when Redis is unavailable.
 
     Args:

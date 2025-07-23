@@ -16,7 +16,7 @@ from services.account_service import AccountService
 login_manager = flask_login.LoginManager()
 
 
-# Flask-Login configuration
+""" Flask-Login 配置 """
 @login_manager.request_loader
 def load_user_from_request(request_from_flask_login):
     """Load user based on the request."""

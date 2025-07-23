@@ -8,7 +8,7 @@ from core.entities import DEFAULT_PLUGIN_ID
 from core.entities.provider_entities import ProviderQuotaType, QuotaUnit, RestrictModel
 from core.model_runtime.entities.model_entities import ModelType
 
-
+"""  SaaS 版（CLOUD）专属、启动时一次性加载的“云厂商模型托管配置中心”。 """
 class HostingQuota(BaseModel):
     quota_type: ProviderQuotaType
     restrict_models: list[RestrictModel] = []

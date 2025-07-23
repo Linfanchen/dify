@@ -15,6 +15,11 @@ from dify_app import DifyApp
 from libs.helper import extract_tenant_id
 from models import Account, EndUser
 
+"""
+    在启动时，根据环境变量一键把 Traces、Metrics、Logs、异常栈全部接入 OpenTelemetry，
+    并自动注入到 Flask / Celery / SQLAlchemy / 日志系统；
+    运行时把租户 ID、用户 ID 追加到当前 Span，方便在 Jaeger / Prometheus / OTLP 后端做多维分析。
+"""
 
 @user_logged_in.connect
 @user_loaded_from_request.connect

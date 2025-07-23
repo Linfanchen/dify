@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class Storage:
+    """ 配置存储 """
     def init_app(self, app: Flask):
         storage_factory = self.get_storage_factory(dify_config.STORAGE_TYPE)
         with app.app_context():
@@ -20,6 +21,7 @@ class Storage:
 
     @staticmethod
     def get_storage_factory(storage_type: str) -> Callable[[], BaseStorage]:
+        """ 获取存储工厂 """
         match storage_type:
             case StorageType.S3:
                 from extensions.storage.aws_s3_storage import AwsS3Storage

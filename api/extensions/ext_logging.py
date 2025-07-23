@@ -9,7 +9,7 @@ import flask
 from configs import dify_config
 from dify_app import DifyApp
 
-
+""" 初始化日志扩展 """
 def init_app(app: DifyApp):
     log_handlers: list[logging.Handler] = []
     log_file = dify_config.LOG_FILE

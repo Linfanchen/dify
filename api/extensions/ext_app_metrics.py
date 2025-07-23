@@ -7,7 +7,7 @@ from flask import Response
 from configs import dify_config
 from dify_app import DifyApp
 
-
+""" 获取监控指标 """
 def init_app(app: DifyApp):
     @app.after_request
     def after_request(response):

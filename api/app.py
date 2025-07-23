@@ -10,9 +10,10 @@ def is_db_command():
 
 # create app
 if is_db_command():
+    # 数据库迁移
     from app_factory import create_migrations_app
-
     app = create_migrations_app()
+    
 else:
     # It seems that JetBrains Python debugger does not work well with gevent,
     # so we need to disable gevent in debug mode.
@@ -35,6 +36,7 @@ else:
     from app_factory import create_app
 
     app = create_app()
+    # 把 celery 加到扩展里
     celery = app.extensions["celery"]
 
 if __name__ == "__main__":

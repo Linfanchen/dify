@@ -11,8 +11,7 @@ from dify_app import DifyApp
 # ----------------------------
 def create_flask_app_with_configs() -> DifyApp:
     """
-    create a raw flask app
-    with configs loaded from .env file
+    加载.env配置文件，并创建flask应用
     """
     dify_app = DifyApp(__name__)
     dify_app.config.from_mapping(dify_config.model_dump())
@@ -27,16 +26,20 @@ def create_flask_app_with_configs() -> DifyApp:
 
 
 def create_app() -> DifyApp:
+    """ 创建flask应用入口 """
     start_time = time.perf_counter()
+    # 加载配置初始化
     app = create_flask_app_with_configs()
     initialize_extensions(app)
     end_time = time.perf_counter()
     if dify_config.DEBUG:
+        # 调试模式：记录启动时间
         logging.info(f"Finished create_app ({round((end_time - start_time) * 1000, 2)} ms)")
     return app
 
 
 def initialize_extensions(app: DifyApp):
+    """ 初始化扩展 """
     from extensions import (
         ext_app_metrics,
         ext_blueprints,
@@ -87,7 +90,9 @@ def initialize_extensions(app: DifyApp):
         ext_request_logging,
     ]
     for ext in extensions:
+        # ext.__name__ 为 'extensions.ext_timezone'
         short_name = ext.__name__.split(".")[-1]
+        # 有 is_enabled 方法就调用
         is_enabled = ext.is_enabled() if hasattr(ext, "is_enabled") else True
         if not is_enabled:
             if dify_config.DEBUG:
@@ -95,6 +100,7 @@ def initialize_extensions(app: DifyApp):
             continue
 
         start_time = time.perf_counter()
+        # 初始化插件：把app传进各个插件，插件内部可以使用来绑定
         ext.init_app(app)
         end_time = time.perf_counter()
         if dify_config.DEBUG:

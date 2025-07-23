@@ -1,7 +1,7 @@
 from configs import dify_config
 from dify_app import DifyApp
 
-
+""" 将日志记录到 sentry """
 def init_app(app: DifyApp):
     if dify_config.SENTRY_DSN:
         import openai

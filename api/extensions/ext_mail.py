@@ -6,7 +6,7 @@ from flask import Flask
 from configs import dify_config
 from dify_app import DifyApp
 
-
+""" 邮件扩展 """
 class Mail:
     def __init__(self):
         self._client = None
@@ -24,6 +24,7 @@ class Mail:
         if dify_config.MAIL_DEFAULT_SEND_FROM:
             self._default_send_from = dify_config.MAIL_DEFAULT_SEND_FROM
 
+        # 匹配邮件协议类型
         match mail_type:
             case "resend":
                 import resend

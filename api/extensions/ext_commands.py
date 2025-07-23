@@ -1,6 +1,6 @@
 from dify_app import DifyApp
 
-
+""" 增加命令行 """
 def init_app(app: DifyApp):
     from commands import (
         add_qdrant_index,

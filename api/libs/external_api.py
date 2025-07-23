@@ -11,6 +11,9 @@ from core.errors.error import AppInvokeQuotaExceededError
 
 
 class ExternalApi(Api):
+    """
+    继承自 flask_restful.Api 并重写了 handle_error 方法。
+    """
     def handle_error(self, e):
         """Error handler for the API transforms a raised exception into a Flask
         response, with the appropriate HTTP status code and body.
@@ -19,9 +22,10 @@ class ExternalApi(Api):
         :type e: Exception
 
         """
+        # 初始化处理
         got_request_exception.send(current_app, exception=e)
-
         headers = Headers()
+
         if isinstance(e, HTTPException):
             if e.response is not None:
                 resp = e.get_response()
