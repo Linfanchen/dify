@@ -4,6 +4,7 @@ from dify_app import DifyApp
 """ 注册蓝图路由 """
 def init_app(app: DifyApp):
     from flask_cors import CORS
+
     # 导入各模块的蓝图
     from controllers.console import bp as console_app_bp
     from controllers.files import bp as files_bp
