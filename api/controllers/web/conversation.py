@@ -17,6 +17,7 @@ from services.web_conversation_service import WebConversationService
 
 
 class ConversationListApi(WebApiResource):
+    # marshal_with用来把 Python 对象（通常是 SQLAlchemy 模型、dict、list 等）序列化为 HTTP 响应
     @marshal_with(conversation_infinite_scroll_pagination_fields)
     def get(self, app_model, end_user):
         app_mode = AppMode.value_of(app_model.mode)

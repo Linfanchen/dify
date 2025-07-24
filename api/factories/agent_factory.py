@@ -1,7 +1,7 @@
 from core.agent.strategy.plugin import PluginAgentStrategy
 from core.plugin.impl.agent import PluginAgentClient
 
-
+""" 智能体工厂 """
 def get_plugin_agent_strategy(
     tenant_id: str, agent_strategy_provider_name: str, agent_strategy_name: str
 ) -> PluginAgentStrategy:

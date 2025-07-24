@@ -25,6 +25,7 @@ languages = list(language_timezone_mapping.keys())
 
 
 def supported_language(lang):
+    """ 是否支持该语言类型 """
     if lang in languages:
         return lang
 

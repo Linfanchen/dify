@@ -15,6 +15,7 @@ from services.webapp_auth_service import WebAppAuthService
 
 
 def validate_jwt_token(view=None):
+    """ 可“带括号”也可“不带括号”的 JWT 装饰器。 """
     def decorator(view):
         @wraps(view)
         def decorated(*args, **kwargs):
@@ -30,6 +31,7 @@ def validate_jwt_token(view=None):
 
 
 def decode_jwt_token():
+    """ Authorization: Bearer <jwt> 解码为用户信息 """
     system_features = FeatureService.get_system_features()
     app_code = str(request.headers.get("X-App-Code"))
     try:
@@ -50,12 +52,16 @@ def decode_jwt_token():
         app_id = decoded.get("app_id")
         app_model = db.session.query(App).filter(App.id == app_id).first()
         site = db.session.query(Site).filter(Site.code == app_code).first()
+
         if not app_model:
             raise NotFound()
+
         if not app_code or not site:
             raise BadRequest("Site URL is no longer valid.")
+
         if app_model.enable_site is False:
             raise BadRequest("Site is disabled.")
+
         end_user_id = decoded.get("end_user_id")
         end_user = db.session.query(EndUser).filter(EndUser.id == end_user_id).first()
         if not end_user:
@@ -76,7 +82,9 @@ def decode_jwt_token():
         )
 
         return app_model, end_user
+
     except Unauthorized as e:
+        # 用户未登录：更细化的异常
         if system_features.webapp_auth.enabled:
             if not app_code:
                 raise Unauthorized("Please re-login to access the web app.")
@@ -112,6 +120,7 @@ def _validate_user_accessibility(
     system_webapp_auth_enabled: bool,
     webapp_settings: WebAppSettings | None,
 ):
+    """ 校验用户是否可以访问 """
     if system_webapp_auth_enabled and app_web_auth_enabled:
         # Check if the user is allowed to access the web app
         user_id = decoded.get("user_id")
@@ -131,6 +140,7 @@ def _validate_user_accessibility(
             raise WebAppAuthAccessDeniedError("Missing auth_type in the token.")
         if not granted_at:
             raise WebAppAuthAccessDeniedError("Missing granted_at in the token.")
+
         # check if sso has been updated
         if auth_type == "external":
             last_update_time = EnterpriseService.get_app_sso_settings_last_update_time()
@@ -143,4 +153,11 @@ def _validate_user_accessibility(
 
 
 class WebApiResource(Resource):
+    """
+    覆写全局装饰器：method_decorators是类的属性，继承自WebApiResource，自动获取该属性
+        method_decorators 是 Flask-RESTful 的一个类级钩子。
+        当请求到达时，Resource.dispatch_request 会把 method_decorators 里的装饰器按顺序应用到当前 HTTP 方法对应的函数上。
+        子类只要继承 WebApiResource，所有 HTTP 方法都自动拥有整条校验链。
+        如果某个资源不需要鉴权，覆盖 method_decorators = [] 即可。
+    """
     method_decorators = [validate_jwt_token]

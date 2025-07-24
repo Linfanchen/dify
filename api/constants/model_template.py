@@ -3,6 +3,7 @@ from collections.abc import Mapping
 
 from models.model import AppMode
 
+""" 模型模板：定义智能体的模式和参数 """
 default_app_templates: Mapping[AppMode, Mapping] = {
     # workflow default mode
     AppMode.WORKFLOW: {
