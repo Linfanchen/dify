@@ -29,6 +29,7 @@ PREVIEW_WORDS_LIMIT = 3000
 
 
 class FileApi(Resource):
+    """ 文件操作API """
     @setup_required
     @login_required
     @account_initialization_required
@@ -49,6 +50,7 @@ class FileApi(Resource):
     @marshal_with(file_fields)
     @cloud_edition_billing_resource_check("documents")
     def post(self):
+        """ 上传文件 """
         file = request.files["file"]
         source_str = request.form.get("source")
         source: Literal["datasets"] | None = "datasets" if source_str == "datasets" else None
@@ -85,6 +87,7 @@ class FileApi(Resource):
 
 
 class FilePreviewApi(Resource):
+    """ 文件预览 """
     @setup_required
     @login_required
     @account_initialization_required
@@ -95,6 +98,7 @@ class FilePreviewApi(Resource):
 
 
 class FileSupportTypeApi(Resource):
+    """ 获取文件支持类型 """
     @setup_required
     @login_required
     @account_initialization_required
