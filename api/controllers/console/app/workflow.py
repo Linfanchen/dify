@@ -353,6 +353,7 @@ class WorkflowDraftRunLoopNodeApi(Resource):
 
 
 class DraftWorkflowRunApi(Resource):
+    """ 运行工作流 """
     @setup_required
     @login_required
     @account_initialization_required

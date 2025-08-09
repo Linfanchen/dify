@@ -33,16 +33,24 @@ class WhereisUserArg(Enum):
 
 
 class FetchUserArg(BaseModel):
-    fetch_from: WhereisUserArg
-    required: bool = False
+    fetch_from: WhereisUserArg # 从哪里获取 user_id
+    required: bool = False # 是否必须提供 user_id
 
 
 def validate_app_token(view: Optional[Callable] = None, *, fetch_user_arg: Optional[FetchUserArg] = None):
+    """
+    用于验证 API 访问权限并注入相关对象
+
+        view: 被装饰的视图函数（可选，允许你使用 @validate_app_token 或 @validate_app_token()）。
+        fetch_user_arg: 一个配置对象，告诉装饰器如何从请求中提取 user_id，并决定是否必须提供。
+    """
     def decorator(view_func):
+
         @wraps(view_func)
         def decorated_view(*args, **kwargs):
+            # 提取 API Token
             api_token = validate_and_get_api_token("app")
-
+            # 验证 App 存在性和状态
             app_model = db.session.query(App).filter(App.id == api_token.app_id).first()
             if not app_model:
                 raise Forbidden("The app no longer exists.")
@@ -53,12 +61,14 @@ def validate_app_token(view: Optional[Callable] = None, *, fetch_user_arg: Optio
             if not app_model.enable_api:
                 raise Forbidden("The app's API service has been disabled.")
 
+            # 验证租户状态
             tenant = db.session.query(Tenant).filter(Tenant.id == app_model.tenant_id).first()
             if tenant is None:
                 raise ValueError("Tenant does not exist.")
             if tenant.status == TenantStatus.ARCHIVE:
                 raise Forbidden("The workspace's status is archived.")
 
+            # 自动登录租户 owner
             tenant_account_join = (
                 db.session.query(Tenant, TenantAccountJoin)
                 .filter(Tenant.id == api_token.tenant_id)
@@ -80,6 +90,7 @@ def validate_app_token(view: Optional[Callable] = None, *, fetch_user_arg: Optio
             else:
                 raise Unauthorized("Tenant does not exist.")
 
+            # 注入参数并调用原始视图
             kwargs["app_model"] = app_model
 
             if fetch_user_arg:

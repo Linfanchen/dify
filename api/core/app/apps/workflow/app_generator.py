@@ -38,6 +38,7 @@ from services.workflow_draft_variable_service import DraftVarLoader, WorkflowDra
 
 logger = logging.getLogger(__name__)
 
+""" 工作流生成器 """
 
 class WorkflowAppGenerator(BaseAppGenerator):
     @overload

@@ -1,5 +1,6 @@
 from typing import Optional
 
+""" 定义各种业务异常 """
 
 class LLMError(ValueError):
     """Base class for all LLM exceptions."""

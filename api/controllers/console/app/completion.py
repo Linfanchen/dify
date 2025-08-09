@@ -96,6 +96,7 @@ class CompletionMessageStopApi(Resource):
 
 
 class ChatMessageApi(Resource):
+    """ 发起聊天消息 """
     @setup_required
     @login_required
     @account_initialization_required
